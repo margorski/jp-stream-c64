@@ -1,0 +1,78 @@
+; section main
+main
+	; inlined setup
+__I2setup
+__I2__I1screen_setup
+    LDX     #$00
+    LDA     #$00
+    STA     EXTCOL
+    LDA     #$04
+    STA     BGCOL0
+    LDA     #$20
+__I2__I1__label_1
+    STA     SCREENRAM,X
+    STA     SCREENRAM+256,X
+    STA     SCREENRAM+512,X
+    STA     SCREENRAM+768,X
+    INX
+	BNE	__I2__I1__label_1
+    LDA     #$01
+__I2__I1__label_2
+    STA     COLORRAM,X
+    STA     COLORRAM+256,X
+    STA     COLORRAM+512,X
+    STA     COLORRAM+768,X
+    INX
+	BNE	__I2__I1__label_2
+    LDA     #$FF
+    STA     SPENA
+    LDA     #$08
+    STA     SPRP0
+    LDA     #$28
+    STA     SP0X
+    LDA     #$32
+    STA     SP0Y
+    LDA     #$09
+    STA     SPRP1
+    LDA     #$5A
+    STA     SP1X
+    LDA     #$64
+    STA     SP1Y
+    LDX     #$FF
+__I2__label_3
+    LDA     #$AA
+    STA     sprite0,X
+    DEX
+	BNE	__I2__label_3
+	; end of inlined setup
+;  	setup		
+;  	{
+__label_4
+;  		A&?VICCR1 <0 {
+    BIT     VICCR1
+    BPL     __label_5
+;  			a=RASTER a?0x37 == {
+    LDA     RASTER
+    CMP     #$37
+    BNE     __label_6
+;  				a=SP0X c- a+1 SP0X=a
+    LDA     SP0X
+    CLc
+    ADC     #$01
+    STA     SP0X
+;  				a=SP0Y c- a+1 SP0Y=a
+    LDA     SP0Y
+    CLc
+    ADC     #$01
+    STA     SP0Y
+;  				// a=SP1X c- a+1 SP1X=a
+;  				// a=SP1Y c- a+1 SP1Y=a
+;  			}
+__label_6
+;  		}			
+__label_5
+;  	} always
+    JMP     __label_4
+;  }
+; section __start
+    JMP		main

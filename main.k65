@@ -1,0 +1,54 @@
+inline screen_setup {
+	x=0
+	EXTCOL=a=0					// black frame
+	BGCOL0=a=4					// black background
+
+	// Fill Screen Ram with spaces	
+	a=0x20
+	{
+		SCREENRAM,x=a
+		SCREENRAM+0x100,x=a
+		SCREENRAM+0x200,x=a
+		SCREENRAM+0x300,x=a
+		x++
+	} !=
+	// Fill Color Ram with black color
+	a=0x1
+	{
+		COLORRAM,x=a
+		COLORRAM+0x100,x=a
+		COLORRAM+0x200,x=a
+		COLORRAM+0x300,x=a
+		x++
+	} !=
+}
+
+inline setup {		
+	screen_setup
+	SPENA=a=0xff
+	
+	SPRP0=a=8 SP0X=a=40 SP0Y=a=50 	 // initialize sprite 0
+	SPRP1=a=9 SP1X=a=90 SP1Y=a=100 	 // initialize sprite 0
+
+	x=0xff {
+		sprite0,x=a=0xaa
+		//sprite1,x=a=0xaa
+		x--
+	} !=
+	//sprite=a=0x0
+	
+}
+
+main {	
+	setup		
+	{
+		A&?VICCR1 <0 {
+			a=RASTER a?0x37 == {
+				a=SP0X c- a+1 SP0X=a
+				a=SP0Y c- a+1 SP0Y=a
+				// a=SP1X c- a+1 SP1X=a
+				// a=SP1Y c- a+1 SP1Y=a
+			}
+		}			
+	} always
+}

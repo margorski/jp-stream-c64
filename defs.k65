@@ -1,0 +1,19 @@
+// -------------------------------- Memory regions --------------------------------
+									// $0801..$8FFF		code/data (PRG file)									
+
+
+
+
+// -------------------------------- Zero page registers --------------------------------
+
+// 0x00 & 0x01 are special purpose on 6510 CPU
+
+var frame_sync;
+
+var something;
+var ptrA[2];
+
+var sprite0=0x200
+var sprite1=0x240
+
+

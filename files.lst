@@ -1,0 +1,8 @@
+-system C64
+-hiaddr 0x3FFF
+-o bin/example.prg
+
+_defs.k65			    main
+defs.k65			    main
+helpers.k65				main
+main.k65			    main
