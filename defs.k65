@@ -8,12 +8,17 @@
 
 // 0x00 & 0x01 are special purpose on 6510 CPU
 
-var frame_sync;
+var frame_sync = 0x02;
 
 var something;
 var ptrA[2];
 
-var sprite0=0x200
-var sprite1=0x240
-
+var sprite0=0xe000
+var sprite1=0xe040
+var sprite2=0xe080
+var sprite3=0xe0C0
+var sprite4=0xe100
+var sprite5=0xe140
+var sprite6=0xe180
+var sprite7=0xe1C0
 

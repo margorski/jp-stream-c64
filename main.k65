@@ -1,20 +1,20 @@
 inline screen_setup {
 	x=0
 	EXTCOL=a=0					// black frame
-	BGCOL0=a=4					// black background
+	BGCOL0=a=0					// black background
 
 	// Fill Screen Ram with spaces	
-	a=0x20
 	{
+		a=x
 		SCREENRAM,x=a
 		SCREENRAM+0x100,x=a
 		SCREENRAM+0x200,x=a
 		SCREENRAM+0x300,x=a
 		x++
 	} !=
-	// Fill Color Ram with black color
-	a=0x1
+	// Fill Color Ram with black color	
 	{
+		a=x
 		COLORRAM,x=a
 		COLORRAM+0x100,x=a
 		COLORRAM+0x200,x=a
@@ -23,29 +23,107 @@ inline screen_setup {
 	} !=
 }
 
-inline setup {		
-	screen_setup
-	SPENA=a=0xff
-	
-	SPRP0=a=8 SP0X=a=40 SP0Y=a=50 	 // initialize sprite 0
-	SPRP1=a=9 SP1X=a=90 SP1Y=a=100 	 // initialize sprite 0
-
-	x=0xff {
-		sprite0,x=a=0xaa
-		//sprite1,x=a=0xaa
-		x--
-	} !=
-	//sprite=a=0x0
-	
+naked int_null {
+	return_i
 }
 
-main {	
+inline setup_vic {
+	CI2PRA=a=0
+	VMCSB=a=0b00000010
+
+}
+
+inline sprite_setup {
+	SPENA=a=0xff
+	SPRP0=a=0x80
+	SPRP1=a=0x81
+	SPRP2=a=0x82
+	SPRP3=a=0x83
+	SPRP4=a=0x84
+	SPRP5=a=0x85
+	SPRP6=a=0x86
+	SPRP7=a=0x87
+
+	
+	
+	SP0X=a=40 SP0Y=a=40 	 // initialize sprite 0
+	SP1X=a=60 SP1Y=a=60 	 // initialize sprite 1
+	SP2X=a=80 SP2Y=a=80 	 // initialize sprite 2	
+	SP3X=a=100 SP3Y=a=100 	 // initialize sprite 3	
+	SP4X=a=120 SP4Y=a=120 	 // initialize sprite 4	
+	SP5X=a=140 SP5Y=a=140 	 // initialize sprite 5	
+	SP6X=a=160 SP6Y=a=160 	 // initialize sprite 6	
+	SP7X=a=180 SP7Y=a=180 	 // initialize sprite 7	
+	
+	
+	x=0x3F {
+		sprite0,x=a=0xff
+		sprite1,x=a=0xff
+		sprite2,x=a=0xff
+		sprite3,x=a=0xff
+		sprite4,x=a=0xff
+		sprite5,x=a=0xff
+		sprite6,x=a=0xff
+		sprite7,x=a=0xff
+		x--
+	} >=0
+}
+
+inline setup {
+	// disable all irqs because
+
+	i+
+	a=0x7F CIAICR=a CI2ICR=a=0x7F	// disable CIA interrupts
+	a=CIAICR a=CI2ICR				// ACK any outstanding interrupts
+
+
+
+
+	NMIADL=a=&<int_null				// setup NMI vector
+	NMIADH=a=&>int_null
+	IRQADL=a=&<int_null			// setup IRQ vector
+	IRQADH=a=&>int_null
+
+
+	memmode_RAM_IO
+	// { EXTCOL++ } always
+
+	// R6510=a=0b00110011	
+	// copy char rom
+x=0
+	{		
+		a=x
+		CHARRAM,x=a
+		CHARRAM+0x100,x=a
+		CHARRAM+0x200,x=a
+		CHARRAM+0x300,x=a
+		CHARRAM+0x400,x=a
+		CHARRAM+0x500,x=a
+		CHARRAM+0x600,x=a
+		CHARRAM+0x700,x=a
+		x++
+	} !=
+
+	setup_vic	
+	screen_setup
+	sprite_setup		
+}
+
+main {
 	setup		
 	{
 		A&?VICCR1 <0 {
 			a=RASTER a?0x37 == {
-				a=SP0X c- a+1 SP0X=a
-				a=SP0Y c- a+1 SP0Y=a
+				EXTCOL++
+
+				SP0X++ SP0Y++
+				SP1X++ SP1Y++
+				SP2X++ SP2Y++
+				SP3X++ SP3Y++
+				SP4X++ SP4Y++
+				SP5X++ SP5Y++
+				SP6X++ SP6Y++
+				SP7X++ SP7Y++
 				// a=SP1X c- a+1 SP1X=a
 				// a=SP1Y c- a+1 SP1Y=a
 			}

@@ -1,78 +1,187 @@
+; section int_null
+int_null
+    RTI
+;  	return_i
+;  }
 ; section main
 main
 	; inlined setup
-__I2setup
-__I2__I1screen_setup
+__I5setup
+    SEi
+    LDA     #$7F
+    STA     CIAICR
+    LDA     #$7F
+    STA     CI2ICR
+    LDA     CIAICR
+    LDA     CI2ICR
+    LDA     #<(int_null)
+    STA     NMIADL
+    LDA     #>(int_null)
+    STA     NMIADH
+    LDA     #<(int_null)
+    STA     IRQADL
+    LDA     #>(int_null)
+    STA     IRQADH
+__I5__I1memmode_RAM_IO
+    LDA     #$35
+    STA     R6510
+    LDX     #$00
+__I5__label_4
+    TXA
+    STA     CHARRAM,X
+    STA     CHARRAM+256,X
+    STA     CHARRAM+512,X
+    STA     CHARRAM+768,X
+    STA     CHARRAM+1024,X
+    STA     CHARRAM+1280,X
+    STA     CHARRAM+1536,X
+    STA     CHARRAM+1792,X
+    INX
+	BNE	__I5__label_4
+__I5__I2setup_vic
+    LDA     #$00
+    STA     CI2PRA
+    LDA     #$02
+    STA     VMCSB
+__I5__I3screen_setup
     LDX     #$00
     LDA     #$00
     STA     EXTCOL
-    LDA     #$04
+    LDA     #$00
     STA     BGCOL0
-    LDA     #$20
-__I2__I1__label_1
+__I5__I3__label_1
+    TXA
     STA     SCREENRAM,X
     STA     SCREENRAM+256,X
     STA     SCREENRAM+512,X
     STA     SCREENRAM+768,X
     INX
-	BNE	__I2__I1__label_1
-    LDA     #$01
-__I2__I1__label_2
+	BNE	__I5__I3__label_1
+__I5__I3__label_2
+    TXA
     STA     COLORRAM,X
     STA     COLORRAM+256,X
     STA     COLORRAM+512,X
     STA     COLORRAM+768,X
     INX
-	BNE	__I2__I1__label_2
+	BNE	__I5__I3__label_2
+__I5__I4sprite_setup
     LDA     #$FF
     STA     SPENA
-    LDA     #$08
+    LDA     #$80
     STA     SPRP0
+    LDA     #$81
+    STA     SPRP1
+    LDA     #$82
+    STA     SPRP2
+    LDA     #$83
+    STA     SPRP3
+    LDA     #$84
+    STA     SPRP4
+    LDA     #$85
+    STA     SPRP5
+    LDA     #$86
+    STA     SPRP6
+    LDA     #$87
+    STA     SPRP7
     LDA     #$28
     STA     SP0X
-    LDA     #$32
+    LDA     #$28
     STA     SP0Y
-    LDA     #$09
-    STA     SPRP1
-    LDA     #$5A
+    LDA     #$3C
     STA     SP1X
-    LDA     #$64
+    LDA     #$3C
     STA     SP1Y
-    LDX     #$FF
-__I2__label_3
-    LDA     #$AA
+    LDA     #$50
+    STA     SP2X
+    LDA     #$50
+    STA     SP2Y
+    LDA     #$64
+    STA     SP3X
+    LDA     #$64
+    STA     SP3Y
+    LDA     #$78
+    STA     SP4X
+    LDA     #$78
+    STA     SP4Y
+    LDA     #$8C
+    STA     SP5X
+    LDA     #$8C
+    STA     SP5Y
+    LDA     #$A0
+    STA     SP6X
+    LDA     #$A0
+    STA     SP6Y
+    LDA     #$B4
+    STA     SP7X
+    LDA     #$B4
+    STA     SP7Y
+    LDX     #$3F
+__I5__I4__label_3
+    LDA     #$FF
     STA     sprite0,X
+    LDA     #$FF
+    STA     sprite1,X
+    LDA     #$FF
+    STA     sprite2,X
+    LDA     #$FF
+    STA     sprite3,X
+    LDA     #$FF
+    STA     sprite4,X
+    LDA     #$FF
+    STA     sprite5,X
+    LDA     #$FF
+    STA     sprite6,X
+    LDA     #$FF
+    STA     sprite7,X
     DEX
-	BNE	__I2__label_3
+	BPL	__I5__I4__label_3
 	; end of inlined setup
 ;  	setup		
 ;  	{
-__label_4
+__label_5
 ;  		A&?VICCR1 <0 {
     BIT     VICCR1
-    BPL     __label_5
+    BPL     __label_6
 ;  			a=RASTER a?0x37 == {
     LDA     RASTER
     CMP     #$37
-    BNE     __label_6
-;  				a=SP0X c- a+1 SP0X=a
-    LDA     SP0X
-    CLc
-    ADC     #$01
-    STA     SP0X
-;  				a=SP0Y c- a+1 SP0Y=a
-    LDA     SP0Y
-    CLc
-    ADC     #$01
-    STA     SP0Y
+    BNE     __label_7
+;  				EXTCOL++
+    INC     EXTCOL
+;  
+;  				SP0X++ SP0Y++
+    INC     SP0X
+    INC     SP0Y
+;  				SP1X++ SP1Y++
+    INC     SP1X
+    INC     SP1Y
+;  				SP2X++ SP2Y++
+    INC     SP2X
+    INC     SP2Y
+;  				SP3X++ SP3Y++
+    INC     SP3X
+    INC     SP3Y
+;  				SP4X++ SP4Y++
+    INC     SP4X
+    INC     SP4Y
+;  				SP5X++ SP5Y++
+    INC     SP5X
+    INC     SP5Y
+;  				SP6X++ SP6Y++
+    INC     SP6X
+    INC     SP6Y
+;  				SP7X++ SP7Y++
+    INC     SP7X
+    INC     SP7Y
 ;  				// a=SP1X c- a+1 SP1X=a
 ;  				// a=SP1Y c- a+1 SP1Y=a
 ;  			}
-__label_6
+__label_7
 ;  		}			
-__label_5
+__label_6
 ;  	} always
-    JMP     __label_4
+    JMP     __label_5
 ;  }
 ; section __start
     JMP		main
